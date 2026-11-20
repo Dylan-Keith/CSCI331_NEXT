@@ -29,11 +29,9 @@ export default function Store() {
                     throw new Error("Could not retrieve products.");
                 }
 
-
-
                 const data = await response.json();
-                setProducts(data);
-            } catch (error) {
+                setProducts(data.slice(0, 20));
+            } catch {
                 setError("There was a problem loading the products.");
             } finally {
                 setLoading(false);
@@ -60,6 +58,7 @@ export default function Store() {
             <h1 className="mb-6 text-3xl font-bold">
                 Online Store
             </h1>
+
             <input
                 type="text"
                 placeholder="Search products..."
@@ -68,28 +67,41 @@ export default function Store() {
                 className="mb-6 w-full rounded border p-2 text-black"
             />
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.map((product) => (
-                    <div
-                        key={product.id}
-                        className="rounded-lg border p-4 shadow"
-                    >
-                        <img
-                            src={product.image}
-                            alt={product.title}
-                            className="mb-4 h-48 w-full object-contain"
-                        />
+            <table className="w-full border-collapse border">
+                <thead>
+                    <tr className="bg-gray-200 text-black">
+                        <th className="border p-3">Title</th>
+                        <th className="border p-3">Image</th>
+                        <th className="border p-3">Price</th>
+                    </tr>
+                </thead>
 
-                        <h2 className="font-bold">{product.title}</h2>
+                <tbody>
+                    {filteredProducts.map((product) => (
+                        <tr key={product.id}>
+                            <td className="border p-3">
+                                {product.title}
+                            </td>
 
-                        <p className="mt-2">${product.price.toFixed(2)}</p>
+                            <td className="border p-3 text-center">
+                                <img
+                                    src={product.image}
+                                    alt={product.title}
+                                    className="mx-auto h-24 w-24 object-contain"
+                                />
+                            </td>
 
-                        <p className="mt-2 text-sm text-gray-500">
-                            {product.category}
-                        </p>
-                    </div>
-                ))}
-            </div>
+                            <td className="border p-3 text-center">
+                                ${product.price.toFixed(2)}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {filteredProducts.length === 0 && (
+                <p className="mt-4">No products found.</p>
+            )}
         </main>
     );
 }
